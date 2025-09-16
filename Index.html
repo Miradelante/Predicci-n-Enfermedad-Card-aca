@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>❤️ Predicción de Enfermedad Cardíaca</title>
+    <style>
+        body { font-family: Arial; margin: 30px; background: #f0f8ff; }
+        .container { max-width: 700px; margin: auto; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #d9534f; }
+        input, select { width: 100%; padding: 10px; margin: 6px 0 16px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #d9534f; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #c9302c; }
+        #resultado { margin-top: 20px; padding: 15px; background: #f9f9f9; border-left: 5px solid #d9534f; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🩺 Predice Riesgo de Enfermedad Cardíaca</h2>
+        <p>Ingresa los datos clínicos del paciente para evaluar riesgo.</p>
+
+        <form id="formPrediccion">
+            <input type="number" id="age" placeholder="Edad" min="1" max="120" required>
+            <select id="sex" required><option value="">Sexo</option><option value="1">Hombre</option><option value="0">Mujer</option></select>
+            <select id="cp" required><option value="">Tipo de Dolor Torácico</option><option value="0">Angina típica</option><option value="1">Angina atípica</option><option value="2">Dolor no anginal</option><option value="3">Asintomático</option></select>
+            <input type="number" id="trestbps" placeholder="Presión Arterial (mmHg)" min="80" max="200" required>
+            <input type="number" id="chol" placeholder="Colesterol (mg/dl)" min="100" max="600" required>
+            <select id="fbs" required><option value="">Azúcar en Ayunas >120?</option><option value="1">Sí</option><option value="0">No</option></select>
+            <select id="restecg" required><option value="">Resultados ECG</option><option value="0">Normal</option><option value="1">Anomalía ST-T</option><option value="2">Hipertrofia ventricular</option></select>
+            <input type="number" id="thalach" placeholder="Frecuencia Cardíaca Máx" min="60" max="220" required>
+            <select id="exang" required><option value="">Angina por Ejercicio?</option><option value="1">Sí</option><option value="0">No</option></select>
+            <input type="number" step="0.1" id="oldpeak" placeholder="Depresión ST por Ejercicio" min="0" max="6" required>
+            <select id="slope" required><option value="">Pendiente ST</option><option value="0">Ascendente</option><option value="1">Plana</option><option value="2">Descendente</option></select>
+            <select id="ca" required><option value="">Vasos Coloreados (0-3)</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+            <select id="thal" required><option value="">Tipo Talasemia</option><option value="3">Normal</option><option value="6">Defecto Fijo</option><option value="7">Defecto Reversible</option></select>
+
+            <button type="submit">Evaluar Riesgo Cardíaco</button>
+        </form>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        document.getElementById('formPrediccion').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                age: parseInt(document.getElementById('age').value),
+                sex: parseInt(document.getElementById('sex').value),
+                cp: parseInt(document.getElementById('cp').value),
+                trestbps: parseInt(document.getElementById('trestbps').value),
+                chol: parseInt(document.getElementById('chol').value),
+                fbs: parseInt(document.getElementById('fbs').value),
+                restecg: parseInt(document.getElementById('restecg').value),
+                thalach: parseInt(document.getElementById('thalach').value),
+                exang: parseInt(document.getElementById('exang').value),
+                oldpeak: parseFloat(document.getElementById('oldpeak').value),
+                slope: parseInt(document.getElementById('slope').value),
+                ca: parseInt(document.getElementById('ca').value),
+                thal: parseInt(document.getElementById('thal').value)
+            };
+
+            // ⚠️ REEMPLAZA ESTA URL CON LA QUE TE GENERÓ NGROK
+            const API_URL = "https://b37da0c36e77.ngrok-free.app";
+
+            try {
+                const res = await fetch(API_URL + "/predict/", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!res.ok) throw new Error("Error en la API");
+
+                const result = await res.json();
+                document.getElementById('resultado').innerHTML = `
+                    <h3>📊 Resultado de la Predicción:</h3>
+                    <p><strong>Diagnóstico:</strong> ${result.resultado}</p>
+                    <p><strong>Confianza:</strong> ${(result.confidence * 100).toFixed(2)}%</p>
+                    <p>${result.mensaje}</p>
+                `;
+            } catch (error) {
+                document.getElementById('resultado').innerHTML = `<p style="color:red;">❌ Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
