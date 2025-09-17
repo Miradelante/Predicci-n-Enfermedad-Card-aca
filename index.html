@@ -1,0 +1,226 @@
+!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evaluador de Riesgo Cardíaco</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #c0392b;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 400px;
+      box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal h3 {
+      margin: 0 0 20px;
+      color: #2c3e50;
+    }
+
+    .modal p {
+      font-size: 18px;
+      margin-bottom: 25px;
+    }
+
+    .modal button {
+      background: #3498db;
+    }
+
+    .modal button:hover {
+      background: #2980b9;
+    }
+
+    .riesgo-bajo { color: #27ae60; }
+    .riesgo-moderado { color: #f39c12; }
+    .riesgo-alto { color: #e74c3c; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Evalúa tu Riesgo Cardíaco</h2>
+    <form id="formularioCardiaco">
+      <div class="form-group">
+        <label for="edad">Edad</label>
+        <select id="edad" name="edad" required>
+          <option value="">Selecciona tu edad</option>
+          <option value="20">20 años</option>
+          <option value="30">30 años</option>
+          <option value="40">40 años</option>
+          <option value="50">50 años</option>
+          <option value="60">60 años</option>
+          <option value="70">70+ años</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="presion">Presión Arterial Sistólica (mmHg)</label>
+        <input type="number" id="presion" name="presion" placeholder="Ej. 120" min="80" max="200" required>
+      </div>
+
+      <div class="form-group">
+        <label for="colesterol">Colesterol Total (mg/dL)</label>
+        <input type="number" id="colesterol" name="colesterol" placeholder="Ej. 200" min="100" max="400" required>
+      </div>
+
+      <div class="form-group">
+        <label for="fumador">¿Fuma actualmente?</label>
+        <select id="fumador" name="fumador" required>
+          <option value="">Selecciona</option>
+          <option value="si">Sí</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+
+      <button type="button" id="evaluarBtn">Evaluar Riesgo Cardiaco</button>
+    </form>
+  </div>
+
+  <!-- Modal -->
+  <div id="modalResultado" class="modal">
+    <div class="modal-content">
+      <h3>Resultado de Evaluación</h3>
+      <p id="textoResultado" class="riesgo-bajo">Tu riesgo cardíaco es: <strong>Bajo</strong></p>
+      <button id="cerrarModal">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('evaluarBtn').addEventListener('click', function() {
+      // Validar formulario
+      if (!document.getElementById('formularioCardiaco').checkValidity()) {
+        alert("Por favor, completa todos los campos.");
+        return;
+      }
+
+      // Obtener valores
+      const edad = parseInt(document.getElementById('edad').value);
+      const presion = parseInt(document.getElementById('presion').value);
+      const colesterol = parseInt(document.getElementById('colesterol').value);
+      const fumador = document.getElementById('fumador').value;
+
+      // Calcular riesgo (lógica simulada)
+      let riesgo = "Bajo";
+      let claseRiesgo = "riesgo-bajo";
+
+      if (edad >= 60 || presion >= 160 || colesterol >= 280 || fumador === "si") {
+        riesgo = "Alto";
+        claseRiesgo = "riesgo-alto";
+      } else if (edad >= 50 || presion >= 140 || colesterol >= 240) {
+        riesgo = "Moderado";
+        claseRiesgo = "riesgo-moderado";
+      }
+
+      // Mostrar en modal
+      const textoResultado = document.getElementById('textoResultado');
+      textoResultado.innerHTML = `Tu riesgo cardíaco es: <strong>${riesgo}</strong>`;
+      textoResultado.className = claseRiesgo;
+
+      // Mostrar modal
+      document.getElementById('modalResultado').style.display = 'flex';
+
+      // Reiniciar formulario
+      document.getElementById('formularioCardiaco').reset();
+    });
+
+    // Cerrar modal
+    document.getElementById('cerrarModal').addEventListener('click', function() {
+      document.getElementById('modalResultado').style.display = 'none';
+    });
+
+    // Cerrar modal al hacer clic fuera del contenido
+    window.addEventListener('click', function(event) {
+      const modal = document.getElementById('modalResultado');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  </script>
+
+</body>
+</html>
