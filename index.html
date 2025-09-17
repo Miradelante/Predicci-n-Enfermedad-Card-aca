@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evaluador de Riesgo Cardiaco</title>
+
+  <!-- 👇 TUS ESTILOS ORIGINALES (NO LOS TOCO) -->
+  <style>
+    /* Tus estilos originales aquí — ¡no los modifiqué! */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #c0392b;
+    }
+  </style>
+
+  <!-- 👇 ESTILOS SOLO PARA EL MODAL (minimalistas y sin afectar tu diseño) -->
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 500px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      position: relative;
+      margin: 0 20px;
+    }
+
+    .modal h3 {
+      margin: 0 0 20px;
+      color: #2c3e50;
+      font-size: 24px;
+    }
+
+    .modal p {
+      font-size: 20px;
+      margin: 15px 0;
+      line-height: 1.5;
+    }
+
+    .modal button {
+      background: #3498db;
+      color: white;
+      padding: 12px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .modal button:hover {
+      background: #2980b9;
+    }
+
+    .riesgo-bajo { color: #27ae60; font-weight: bold; }
+    .riesgo-moderado { color: #f39c12; font-weight: bold; }
+    .riesgo-alto { color: #e74c3c; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <!-- 👇 TU ESTRUCTURA HTML ORIGINAL (SIN CAMBIOS) -->
+  <div class="container">
+    <h2>Evaluador de Riesgo Cardiaco</h2>
+
+    <form id="formularioCardiaco">
+
+      <div class="form-group">
+        <label for="nombre">Nombre Completo</label>
+        <input type="text" id="nombre" name="nombre" required>
+      </div>
+
+      <div class="form-group">
+        <label for="edad">Edad</label>
+        <input type="number" id="edad" name="edad" min="1" max="120" required>
+      </div>
+
+      <div class="form-group">
+        <label for="sexo">Sexo</label>
+        <select id="sexo" name="sexo" required>
+          <option value="">Seleccionar</option>
+          <option value="masculino">Masculino</option>
+          <option value="femenino">Femenino</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="altura">Altura (cm)</label>
+        <input type="number" id="altura" name="altura" min="50" max="250" required>
+      </div>
+
+      <div class="form-group">
+        <label for="peso">Peso (kg)</label>
+        <input type="number" id="peso" name="peso" min="2" max="300" step="0.1" required>
+      </div>
+
+      <div class="form-group">
+        <label for="presion_sistolica">Presión Sistólica (mmHg)</label>
+        <input type="number" id="presion_sistolica" name="presion_sistolica" min="70" max="300" required>
+      </div>
+
+      <div class="form-group">
+        <label for="presion_diastolica">Presión Diastólica (mmHg)</label>
+        <input type="number" id="presion_diastolica" name="presion_diastolica" min="40" max="200" required>
+      </div>
+
+      <div class="form-group">
+        <label for="colesterol">Colesterol Total (mg/dL)</label>
+        <input type="number" id="colesterol" name="colesterol" min="100" max="500" required>
+      </div>
+
+      <div class="form-group">
+        <label for="glucosa">Glucosa en Ayunas (mg/dL)</label>
+        <input type="number" id="glucosa" name="glucosa" min="50" max="500" required>
+      </div>
+
+      <div class="form-group">
+        <label for="fumador">¿Fuma actualmente?</label>
+        <select id="fumador" name="fumador" required>
+          <option value="">Seleccionar</option>
+          <option value="si">Sí</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="actividad_fisica">¿Realiza actividad física regularmente?</label>
+        <select id="actividad_fisica" name="actividad_fisica" required>
+          <option value="">Seleccionar</option>
+          <option value="si">Sí</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+
+      <!-- 👇 BOTÓN SIN CAMBIOS -->
+      <button type="button" id="evaluarBtn">Evaluar Riesgo Cardiaco</button>
+    </form>
+  </div>
+
+  <!-- 👇 MODAL (agregado al final, sin tocar tu estructura) -->
+  <div id="modalResultado" class="modal">
+    <div class="modal-content">
+      <h3>Resultado de Evaluación</h3>
+      <p id="textoResultado" class="riesgo-bajo">Tu riesgo cardíaco es: <strong>Bajo</strong></p>
+      <button id="cerrarModal">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('evaluarBtn').addEventListener('click', function() {
+      const form = document.getElementById('formularioCardiaco');
+
+      // 👇 Validación manual campo por campo (evita falsos positivos)
+      let isValid = true;
+      const requiredFields = form.querySelectorAll('[required]');
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          isValid = false;
+          field.style.border = '2px solid #e74c3c';
+        } else {
+          field.style.border = '1px solid #ccc';
+        }
+      });
+
+      if (!isValid) {
+        alert("Por favor, completa todos los campos obligatorios.");
+        return;
+      }
+
+      // 👇 Obtener valores (solo si son válidos)
+      const edad = parseInt(document.getElementById('edad').value);
+      const presion_sistolica = parseInt(document.getElementById('presion_sistolica').value);
+      const colesterol = parseInt(document.getElementById('colesterol').value);
+      const fumador = document.getElementById('fumador').value;
+      const actividad_fisica = document.getElementById('actividad_fisica').value;
+
+      // 👇 Lógica simulada (cámbiala por tu fórmula real)
+      let riesgo = "Bajo";
+      let claseRiesgo = "riesgo-bajo";
+
+      if (edad >= 60 || presion_sistolica >= 160 || colesterol >= 280 || fumador === "si") {
+        riesgo = "Alto";
+        claseRiesgo = "riesgo-alto";
+      } else if (edad >= 45 || presion_sistolica >= 140 || colesterol >= 240 || actividad_fisica === "no") {
+        riesgo = "Moderado";
+        claseRiesgo = "riesgo-moderado";
+      }
+
+      // 👇 Mostrar resultado en modal
+      const textoResultado = document.getElementById('textoResultado');
+      textoResultado.innerHTML = `Tu riesgo cardíaco es: <strong>${riesgo}</strong>`;
+      textoResultado.className = claseRiesgo;
+
+      // 👇 Mostrar modal
+      document.getElementById('modalResultado').style.display = 'flex';
+    });
+
+    // 👇 Al cerrar modal → limpiar formulario
+    document.getElementById('cerrarModal').addEventListener('click', function() {
+      document.getElementById('modalResultado').style.display = 'none';
+      document.getElementById('formularioCardiaco').reset();
+
+      // Opcional: restaurar bordes
+      const fields = document.querySelectorAll('input, select');
+      fields.forEach(field => field.style.border = '1px solid #ccc');
+    });
+
+    // 👇 Cerrar modal al hacer clic fuera
+    window.addEventListener('click', function(event) {
+      const modal = document.getElementById('modalResultado');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+        document.getElementById('formularioCardiaco').reset();
+
+        // Opcional: restaurar bordes
+        const fields = document.querySelectorAll('input, select');
+        fields.forEach(field => field.style.border = '1px solid #ccc');
+      }
+    });
+  </script>
+
+</body>
+</html>
